@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ebay search</title>
+    <style>
+        #content {
+            width: 1000px;
+            margin-left: 300px;
+        }
+
+        #title {
+            text-align: center;
+            font-size: 35px;
+            height: 85px;
+        }
+
+        #list {
+            text-align: center;
+        }
+
+        #minPrice, #maxPrice {
+            width: 60px;
+        }
+
+        #buttonblock {
+            display: flex;
+            justify-content: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 60%;
+            margin: 20px auto;
+            border: 1px solid;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid;
+        }
+
+        .item-container {
+            display: flex;
+            border-radius: 10px;
+            border: 2px solid #afacac;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            background-color: #f5f5f5;
+            width: 100%;
+            height: 200px;
+            text-align: left;
+        }
+
+        .item-container:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .mybutton {
+            border: none;
+            background-color: rgb(212, 212, 212);
+            color: black;
+            padding: 5px;
+            border-radius: 2px;
+        }
+
+        .mybutton:hover {
+            background-color: green;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <div id="title">
+            <a href="http://www.ebay.com" target="_blank" style="display: inline-block;">
+                <img src="eBayLogo.png" style="width: 180px; height: 80px; vertical-align: middle;"></img>
+            </a>
+            <p style="display: inline-block; vertical-align: middle; font-family: serif;"><b>Shopping</b></p>
+        </div>
+
+        <table>
+            <tr>
+                <td> 
+                    <label><b>KeyWords</b><b style="color: red;">*</b><b>: </b></label>
+                    <input type="text" id="itemName" placeholder="">
+                </td>
+            </tr>
+            <tr>
+                <td> 
+                    <label><b>Price Range: </b></label>
+                    <label>From  </label>
+                    <input type="number" id="minPrice" name="minPrice">
+                    <label>to  </label>
+                    <input type="number" id="maxPrice" name="maxPrice">
+                </td>
+            </tr>
+            <tr>
+                <td> 
+                    <label><b>Condition:</b></label>
+                    <input type="checkbox" id="option11">
+                    <label>New</label>
+                    <input type="checkbox" id="option12">
+                    <label>Used</label>
+                    <input type="checkbox" id="option13">
+                    <label>Very Good</label>
+                    <input type="checkbox" id="option14">
+                    <label>Good</label>
+                    <input type="checkbox" id="option15">
+                    <label>Acceptable</label>
+                </td>
+            </tr>
+            <tr>
+                <td> 
+                    <label><b>Seller: </b></label>
+                    <input type="checkbox" id="option2">
+                    <label>Return Accepted</label>
+                </td>
+            </tr>
+            <tr>
+                <td> 
+                    <label><b>Shipping: </b></label>
+                    <input type="checkbox" id="option31">
+                    <label>Free</label>
+                    <input type="checkbox" id="option32">
+                    <label>Expedited</label>
+                </td>
+            </tr>
+            <tr>
+                <td> 
+                    <label><b>Sort by: </b></label>
+                    <select id="list" name="list">
+                        <option value="1">Best Match</option>
+                        <option value="2">Price: highest first</option>
+                        <option value="3">Price + Shipping: highest first</option>
+                        <option value="4">Price + Shipping: lowest first</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td> 
+                    <button type="button" id="clearButton">Clear</button>
+                    <button type="button" id="searchButton">Search</input>
+                </td>
+            </tr>
+        </table>
+
+        <div id="resulttitle">
+        <!--content returned by api-->
+        </div>
+        <div id="buttonblock">
+            <button type="button" id="backButton" style="display: none;">Back to search results</button>
+        </div>
+        <div id="resultcontent">
+        <!--content returned by api-->
+        </div>
+        <div id="buttonblock">
+            <button type="button" id="showmoreButton" style="display: none;">Show more</button>
+            <button type="button" id="showlessButton" style="display: none;">Show less</button>
+        </div>
+    </div>
+    
+    <script>
+    const resulttitleContainer = document.getElementById('resulttitle');
+    const resultcontentContainer = document.getElementById('resultcontent');
+    const searchButton = document.getElementById('searchButton');
+    const clearButton = document.getElementById('clearButton');
+    const showmoreButton = document.getElementById('showmoreButton');
+    const showlessButton = document.getElementById('showlessButton');
+    const backButton = document.getElementById('backButton');
+    backButton.classList.add('mybutton');
+    showlessButton.classList.add('mybutton');
+    showmoreButton.classList.add('mybutton');
+    clearButton.classList.add('mybutton');
+    searchButton.classList.add('mybutton');
+    let showmore = false; 
+    let searchResult;
+    let titleresult;
+   
+    searchButton.addEventListener('click', () => {
+        const itemName = document.getElementById('itemName').value;
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        const option11 = document.getElementById('option11').checked;
+        const option12 = document.getElementById('option12').checked;
+        const option13 = document.getElementById('option13').checked;
+        const option14 = document.getElementById('option14').checked;
+        const option15 = document.getElementById('option15').checked;
+        const option2 = document.getElementById('option2').checked;
+        const option31 = document.getElementById('option31').checked;
+        const sortby = document.getElementById('list').selectedIndex;
+
+        if (itemName == "") {
+            document.getElementById('itemName').setCustomValidity("Please fill out this field.");
+            document.getElementById('itemName').reportValidity();
+        } else if (parseInt(minPrice, 10) < 0 || parseInt(maxPrice, 10) < 0) {
+            alert("Price Range values cannot be negative! Please try a value greater than or equal to 0.0");
+        } else if (parseInt(minPrice, 10) > parseInt(maxPrice, 10)) {
+            alert("oops! Lower proce limit cannot be greater than upper price limit! Please try again.");
+        } else {
+            // let apiUrl = `http://127.0.0.1:8080/search?keywords=${itemName}`;
+            let apiUrl = `https://myfirstweb-991001.wl.r.appspot.com/search?keywords=${itemName}`;
+
+            let options = ["BestMatch", "CurrentPriceHighest", "PricePlusShippingHighest", "PricePlusShippingLowest"];
+            let selectoption = options[sortby];
+            apiUrl += `&sortby=${selectoption}`;
+            
+            if (minPrice != "") {
+                apiUrl += `&MinPrice=${minPrice}`;
+            }
+
+            if (maxPrice != "") {
+                apiUrl += `&MaxPrice=${maxPrice}`;
+            }
+
+            if (option11) {
+                apiUrl += `&Condition1=New`;
+            }
+
+            if (option12) {
+                apiUrl += `&Condition2=Used`;
+            }
+
+            if (option13) {
+                apiUrl += `&Condition3=Very%20Good`;
+            }
+
+            if (option14) {
+                apiUrl += `&Condition4=Good`;
+            }
+
+            if (option15) {
+                apiUrl += `&Condition5=Acceptable`;
+            }
+
+            if (option2) {
+                apiUrl += `&ReturnAcceptedOnly=true`;
+            }
+
+            if (option31) {
+                apiUrl += `&FreeShippingOnly=true`;
+            }
+            
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    resulttitleContainer.innerHTML = '';
+                    resultcontentContainer.innerHTML = '';
+                    
+                    if (data.findItemsAdvancedResponse[0].searchResult[0]['@count'] > 0) {
+                        const resultCount = data.findItemsAdvancedResponse[0].paginationOutput[0].totalEntries[0];
+                        const resultsFoundText = `${resultCount} Results found for <em>${itemName}</em>`;
+
+                        const resultsFound = document.createElement('p');
+                        resultsFound.classList.add('bold');
+                        resultsFound.align='center';
+                        resultsFound.style.fontSize='30px';
+                        resultsFound.innerHTML = resultsFoundText;
+                        resulttitleContainer.appendChild(resultsFound);
+
+                        const hr = document.createElement('hr');
+                        resulttitleContainer.appendChild(hr);
+
+                        titleresult = resulttitleContainer.innerHTML;
+                        searchResult = data.findItemsAdvancedResponse[0].searchResult[0].item.slice(0, 10);
+                        
+                        displayresult(searchResult, 3);
+                        showmoreButton.style.display = 'block';
+                        showlessButton.style.display = 'none';
+                        backButton.style.display = 'none';
+                    } else {
+                        const noResultsFound = document.createElement('p');
+                        noResultsFound.classList.add('bold');
+                        noResultsFound.align='center';
+                        noResultsFound.style.fontSize='30px';
+                        noResultsFound.textContent = 'No results found';
+                        resulttitleContainer.appendChild(noResultsFound);
+                        showmoreButton.style.display = 'none';
+                        showlessButton.style.display = 'none';
+                        backButton.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('API request error:', error);
+                    resulttitleContainer.innerHTML = '<p>Error occurred while fetching data.</p>';
+                });
+        }   
+    });
+
+    clearButton.addEventListener('click', function() {
+        resulttitleContainer.innerHTML = '';
+        resultcontentContainer.innerHTML = '';
+        document.getElementById('itemName').value = '';
+        document.getElementById('minPrice').value = '';
+        document.getElementById('maxPrice').value = '';
+
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+
+        document.getElementById('list').selectedIndex = 0;
+        
+        showmoreButton.style.display = 'none';
+        showlessButton.style.display = 'none';
+        backButton.style.display = 'none';
+    });
+
+    showmoreButton.addEventListener('click', () => {
+        showmore = true;
+        resultcontentContainer.innerHTML = '';
+        displayresult(searchResult, 10);
+        showmoreButton.style.display = 'none';
+        showlessButton.style.display = 'block';
+    });
+
+    showlessButton.addEventListener('click', () => {
+        showmore = false;
+        resultcontentContainer.innerHTML = '';
+        displayresult(searchResult, 3);
+        showmoreButton.style.display = 'block';
+        showlessButton.style.display = 'none';
+    });
+
+    backButton.addEventListener('click', () => {
+        if (showmore) {
+            resulttitleContainer.innerHTML = titleresult;
+            resultcontentContainer.innerHTML = '';
+            displayresult(searchResult, 10);
+            showmoreButton.style.display = 'none';
+            showlessButton.style.display = 'block';
+            backButton.style.display = 'none';
+        } else {
+            resulttitleContainer.innerHTML = titleresult;
+            resultcontentContainer.innerHTML = '';
+            displayresult(searchResult, 3);
+            showmoreButton.style.display = 'block';
+            showlessButton.style.display = 'none';
+            backButton.style.display = 'none';
+        }
+    });
+
+    function displayresult(data, number) {
+        data.slice(0, number).forEach(item => {
+            const itemContainer = document.createElement('button');
+            itemContainer.classList.add('item-container');
+
+            const imgbox = document.createElement('div'); 
+            imgbox.style.display = 'inline-block';
+            imgbox.style.display = 'flex';
+            imgbox.style.marginLeft = '30px';
+            imgbox.style.marginRight = '30px';
+            imgbox.style.alignItems = 'center';
+            imgbox.style.justifyContent = 'center';
+            imgbox.style.height = "100%";
+            imgbox.style.width = "130px";
+            const img = document.createElement('img');
+            const newImageElement = new Image();
+            newImageElement.onload = function () {
+                img.src = item.galleryURL[0];
+            };
+            newImageElement.onerror = function () {
+                img.src = "ebay_default.jpg";
+                img.style.height = "75px";
+                img.style.width = "130px";
+            };
+            newImageElement.src = item.galleryURL[0];
+            img.style.objectFit = 'contain';
+            img.style.transition = '2s';
+            img.addEventListener('mouseover', () => {
+                img.style.zIndex = '1';
+                img.style.transform = 'scale(2)';
+            });
+            img.addEventListener('mouseout', () => {
+                img.style.zIndex = '0';
+                img.style.transform = 'scale(1)';
+            });
+            img.style.border = "5px solid rgb(212, 212, 212)";
+            imgbox.appendChild(img);
+
+            const wordcontent = document.createElement('div');
+            wordcontent.style.display = 'inline-block';
+            wordcontent.style.lineHeight = '2.1';
+            wordcontent.style.fontSize = '20px';
+            wordcontent.style.fontFamily = 'serif';
+            wordcontent.style.marginLeft = '10px';
+            wordcontent.style.overflow = 'hidden';
+            wordcontent.style.textOverflow = 'ellipsis';
+            wordcontent.style.whiteSpace = 'nowrap';
+
+            const description = document.createElement('div');
+            description.classList.add('bold');
+            description.textContent = item.title[0];
+            description.style.overflow = 'hidden';
+            description.style.textOverflow = 'ellipsis';
+            description.style.whiteSpace = 'nowrap';
+
+            const categorybox = document.createElement('div');
+            const category = document.createElement('div');
+            category.textContent = ' ';
+            category.style.display = 'inline-block';
+            if (item.primaryCategory) {
+                if (item.primaryCategory[0].categoryName) {
+                    category.innerHTML = 'Category: <em>' + item.primaryCategory[0].categoryName[0] + '</em>';
+                    const limg1 = document.createElement('img');
+                    limg1.src = "redirect.png";
+                    limg1.style.display = 'inline-block';
+                    limg1.style.height = '20px';
+                    limg1.style.width = '20px';
+                    const link = document.createElement('a');
+                    link.href = item.viewItemURL;
+                    link.appendChild(limg1);
+                    link.target = "_blank";
+                    limg1.addEventListener('click', () => {
+                        event.stopPropagation();
+                    })
+                    categorybox.appendChild(category);
+                    categorybox.appendChild(link);
+                }
+            }
+
+            const conditionbox = document.createElement('div');
+            const condition = document.createElement('div');
+            condition.textContent = ' ';
+            if (item.condition) {
+                if (item.condition[0].conditionDisplayName) {
+                    condition.innerHTML = `Condition: ${item.condition[0].conditionDisplayName[0]}`;
+                    condition.style.display = 'inline-block';
+                    conditionbox.appendChild(condition);
+                    if (item.topRatedListing) {
+                        if (item.topRatedListing == "true") {
+                            const limg2 = document.createElement('img');
+                            limg2.src = "topRatedImage.png";
+                            limg2.style.display = 'inline-block';
+                            limg2.style.height = '20px';
+                            limg2.style.width = '20px';
+                            conditionbox.appendChild(limg2);
+                        }
+                    }
+                }
+            }
+
+            const price = document.createElement('div');
+            price.classList.add('bold');
+            if (item.sellingStatus) {
+                if (item.sellingStatus[0].convertedCurrentPrice) {
+                    price.textContent = 'Price: $';
+                    price.textContent += item.sellingStatus[0].convertedCurrentPrice[0].__value__;
+                }
+            }
+            if (item.shippingInfo) {
+                if (item.shippingInfo[0].shippingServiceCost) {
+                    if (parseFloat(item.shippingInfo[0].shippingServiceCost[0].__value__, 10) > 0) {
+                        price.textContent += "(+$" + item.shippingInfo[0].shippingServiceCost[0].__value__ + " for shipping)";
+                    }
+                }
+            }
+
+            itemContainer.appendChild(imgbox);
+            wordcontent.appendChild(description);
+            wordcontent.appendChild(categorybox);
+            wordcontent.appendChild(conditionbox);
+            wordcontent.appendChild(price);
+            itemContainer.appendChild(wordcontent);
+
+            resultcontentContainer.appendChild(itemContainer);
+            itemContainer.addEventListener('click', () => {
+                const itemid = item.itemId[0];
+                // let url = `http://127.0.0.1:8080/detail?itemId=${itemid}`;
+                let url = `https://myfirstweb-991001.wl.r.appspot.com/detail?itemId=${itemid}`;
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        showmoreButton.style.display = 'none';
+                        showlessButton.style.display = 'none';
+                        resulttitleContainer.innerHTML = '';
+                        resultcontentContainer.innerHTML = '';
+
+                        const detailTitle = document.createElement('p');
+                        detailTitle.classList.add('bold');
+                        detailTitle.align='center';
+                        detailTitle.style.fontSize='30px';
+                        detailTitle.textContent = "Item Details";
+                        resulttitleContainer.appendChild(detailTitle);
+
+                        backButton.style.display = 'block';
+
+                        const table = document.createElement('table');
+                        table.style.width = "100%";
+
+                        const line = document.createElement('tr');
+                        line.style.textAlign = 'left';
+                        const key = document.createElement('td');
+                        key.style.textAlign = 'left';
+                        key.style.fontWeight = 'bold';
+                        key.textContent = "Photo";
+                        const value = document.createElement('td');
+                        value.style.textAlign = 'left';
+                        const img = document.createElement('img');
+                        const ImageTester = new Image();
+                        ImageTester.onload = function () {
+                            img.src = data.Item.PictureURL[0];
+                        };
+                        ImageTester.onerror = function () {
+                            img.src = "ebay_default.jpg";
+                        };
+                        ImageTester.src = data.Item.PictureURL[0];
+                        img.style.height = "250px";
+                        img.style.width = "auto";
+                        value.appendChild(img);
+                        line.appendChild(key);
+                        line.appendChild(value);
+                        table.appendChild(line);
+
+                        if (data.Item.ViewItemURLForNaturalSearch) {
+                            const line = document.createElement('tr');
+                            line.style.textAlign = 'left';
+                            const key = document.createElement('td');
+                            key.style.textAlign = 'left';
+                            key.style.fontWeight = 'bold';
+                            key.textContent = "eBay Link";
+                            const value = document.createElement('td');
+                            value.style.textAlign = 'left';
+                            const link = document.createElement('a');
+                            link.href = data.Item.ViewItemURLForNaturalSearch;
+                            link.textContent = "eBay Product Link";
+                            link.target = "_blank"
+                            value.appendChild(link);
+                            line.appendChild(key);
+                            line.appendChild(value);
+                            table.appendChild(line);
+                        }
+
+                        if (data.Item.Title) {
+                            const line = document.createElement('tr');
+                            line.style.textAlign = 'left';
+                            const key = document.createElement('td');
+                            key.style.textAlign = 'left';
+                            key.style.fontWeight = 'bold';
+                            key.textContent = "Title";
+                            const value = document.createElement('td');
+                            value.style.textAlign = 'left';
+                            value.textContent = data.Item.Title;
+                            line.appendChild(key);
+                            line.appendChild(value);
+                            table.appendChild(line);
+                        }
+
+                        if (data.Item.Subtitle) {
+                            const line = document.createElement('tr');
+                            line.style.textAlign = 'left';
+                            const key = document.createElement('td');
+                            key.style.textAlign = 'left';
+                            key.style.fontWeight = 'bold';
+                            key.textContent = "Subtitle";
+                            const value = document.createElement('td');
+                            value.style.textAlign = 'left';
+                            value.textContent = data.Item.Subtitle;
+                            line.appendChild(key);
+                            line.appendChild(value);
+                            table.appendChild(line);
+                        }
+
+                        if (data.Item.ConvertedCurrentPrice.Value) {
+                            const line = document.createElement('tr');
+                            line.style.textAlign = 'left';
+                            const key = document.createElement('td');
+                            key.style.textAlign = 'left';
+                            key.style.fontWeight = 'bold';
+                            key.textContent = "Price";
+                            const value = document.createElement('td');
+                            value.style.textAlign = 'left';
+                            value.textContent = data.Item.ConvertedCurrentPrice.Value + " ";
+                            value.textContent += data.Item.ConvertedCurrentPrice.CurrencyID;
+                            line.appendChild(key);
+                            line.appendChild(value);
+                            table.appendChild(line);
+                        }
+
+                        if (data.Item.Location) {
+                            const line = document.createElement('tr');
+                            line.style.textAlign = 'left';
+                            const key = document.createElement('td');
+                            key.style.textAlign = 'left';
+                            key.style.fontWeight = 'bold';
+                            key.textContent = "Location";
+                            const value = document.createElement('td');
+                            value.style.textAlign = 'left';
+                            value.textContent = data.Item.Location;
+                            line.appendChild(key);
+                            line.appendChild(value);
+                            table.appendChild(line);
+                        }
+
+                        if (data.Item.Seller) {
+                            if (data.Item.Seller.UserID) {
+                                const line = document.createElement('tr');
+                                line.style.textAlign = 'left';
+                                const key = document.createElement('td');
+                                key.style.textAlign = 'left';
+                                key.style.fontWeight = 'bold';
+                                key.textContent = "Seller";
+                                const value = document.createElement('td');
+                                value.style.textAlign = 'left';
+                                value.textContent = data.Item.Seller.UserID;
+                                line.appendChild(key);
+                                line.appendChild(value);
+                                table.appendChild(line);
+                            }
+                        }
+
+                        if (data.Item.ReturnPolicy) {
+                            const line = document.createElement('tr');
+                            const key = document.createElement('td');
+                            const value = document.createElement('td');
+                            value.textContent = '';
+                            if (data.Item.ReturnPolicy.ReturnsAccepted) {
+                                line.style.textAlign = 'left';
+                                key.style.textAlign = 'left';
+                                key.style.fontWeight = 'bold';
+                                key.textContent = "Return Policy(US)";
+                                value.style.textAlign = 'left';
+                                value.textContent += data.Item.ReturnPolicy.ReturnsAccepted;
+                            }
+                            if (data.Item.ReturnPolicy.ReturnsWithin) {
+                                value.textContent += " within " + data.Item.ReturnPolicy.ReturnsWithin;
+                            }
+                            line.appendChild(key);
+                            line.appendChild(value);
+                            table.appendChild(line);
+                        }
+
+                        if (data.Item.ItemSpecifics) {
+                            data.Item.ItemSpecifics.NameValueList.forEach(item => {
+                                const line = document.createElement('tr');
+                                line.style.textAlign = 'left';
+                                const key = document.createElement('td');
+                                key.style.textAlign = 'left';
+                                key.style.fontWeight = 'bold';
+                                key.textContent = item.Name;
+                                const value = document.createElement('td');
+                                value.style.textAlign = 'left';
+                                value.textContent = item.Value[0];
+                                line.appendChild(key);
+                                line.appendChild(value);
+                                table.appendChild(line);
+                            })
+                        }
+
+                        resultcontentContainer.appendChild(table);
+                    })
+                    .catch(error => {
+                        console.error('API request error:', error);
+                        resulttitleContainer.innerHTML = '<p>Error occurred while fetching data.</p>';
+                    });
+            })
+        });
+    }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,133 @@
+  @font-face {
+    font-family: 'Font1';
+    src: url('Font1.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Font2';
+    src: url('Font2.ttf') format('truetype');
+  }
+
+  hr {
+    margin: 0px -107px;
+  }
+
+  .box {
+    width: 802px;
+}
+
+  .titlebox {
+    background-color: white;
+  }
+
+  .title1 {
+    margin: 20px 0px;
+    font-size: 35px;
+    color: rgb(10, 50, 190);
+    font-family: Font1;
+  }
+
+  .title2 {
+    position: absolute;
+    margin: 40px 40px;
+    font-size: 45px;
+    font-family: Font2;
+    color:rgb(10, 50, 190);
+    font-weight: 900;
+  }
+
+  .title3 {
+    text-align: center;
+    font-size: 30px;
+    font-family: Font2;
+    color:rgb(10, 50, 190);
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+
+  .button1 {
+    color: rgb(10, 50, 190);
+    background-color: transparent;
+    padding: 15px 5px 40px 5px;
+    margin-left: -5px;
+    border: none;
+    font-size: 10px;
+  }
+
+  .button2 {
+    color: black;
+    background-color: transparent;
+    padding: 10px 10px 40px 5px;
+    border: none;
+    font-size: 10px;
+  }
+
+  .button3 {
+    color: black;
+    background-color: white;
+    padding: 10px 15px 10px 15px;
+    font-size: 13px;
+    margin: 190px 40px;
+    border: none;
+  }
+
+  .contentbox {
+    background-color: white;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px;
+  }
+
+  .imgcontainer {
+    margin: -20px -15px;
+    display: flex;
+    flex-wrap: wrap;
+    height: 1030px;
+    background-color: white;
+  }
+
+  .image {
+    margin: 0px 15px 170px 15px;
+    flex: 1 1 40%;
+    background-position: center;
+    background-size: cover;
+    position: relative;
+  }
+
+  .image1 {
+    background-image: url("Decor.png");
+  }
+
+  .image2 {
+    background-image: url("Bedroom.png");
+  }
+
+  .image3 {
+    background-image: url("Kitchen.png");
+  }
+
+  .image4 {
+    background-image: url("Bathroom.png");
+  }
+
+  .image p {
+    position: absolute;
+    color: rgb(10, 50, 190);
+    text-align: center;
+    font-family: Font2;
+    font-size: 20px;
+    font-weight: 500;
+    bottom: -100px;
+    left: 0;
+    right: 0;
+  }
+
+  .bigpicture {
+    margin-left: 100px;
+    height: 560px;
+    width: 802px;
+    position: relative;
+    background-position: 100px -5px;
+    background-size: 810px 700px;
+    background-image: url("Cutlery.png");
+    background-attachment: fixed;
+  }
