@@ -1,0 +1,120 @@
+.blackBox {
+    max-width: 1000px !important; 
+    color: white !important; 
+    background-color: black !important; 
+    margin-top: 20px; 
+    display: flex; 
+    justify-content: center;
+    padding: 20px; 
+    border-radius: 2px;         
+}
+
+@media (max-width: 1000px) {
+    .blackBox {
+        max-width: 96% !important; 
+        color: white !important; 
+        background-color: black !important; 
+        margin-top: 20px; 
+        display: flex; 
+        justify-content: center;
+        padding: 20px; 
+        border-radius: 2px;         
+    }
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+  
+
+@media (min-width: 576px) {
+    .flex-container {
+        flex-direction: column;
+        align-items: start;
+    }
+}
+
+.space {
+    margin-right: 5px;
+}
+
+.myNavPill {
+    background-color: white !important;
+    color: black !important;
+}
+
+.myNavPill.active {
+    background-color: black !important;
+    color: rgb(200, 196, 196) !important;
+}
+
+.noRecords {
+    background-color: rgb(245, 219, 181);
+    color: rgb(246, 121, 5) !important;
+}
+
+.detailButtonBox {
+    display: flex;
+    justify-content: end;
+}
+
+.detailButton {
+    background-color: rgb(231, 227, 227) !important;
+    margin-bottom: 20px;
+    border: none !important;
+}
+
+.listButton {
+    background-color: rgb(231, 227, 227) !important;
+    margin-bottom: 20px;
+    border: none !important;
+}
+
+.itemTitle {
+    color: rgb(59, 59, 247);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.itemTitle:hover {
+    color: rgb(35, 35, 237);
+}
+
+.photoDisplay {
+    column-count: 3;
+    column-gap: 10px;
+}
+
+@media (max-width: 800px) {
+    .photoDisplay {
+        column-count: 1;
+        column-gap: 10px;
+    }
+}
+
+.nav-tabs .nav-link {
+    background-color: white !important;
+    color: black !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: black !important;
+    color: #FFFFFF !important;
+}
+
+.ag-theme-alpine-dark {
+    --ag-range-selection-border-style: transparent;
+}
+
+.noHeader .ag-root .ag-header {
+    display: none;
+}
+
+.page-item .page-link {
+  color: black;
+}
