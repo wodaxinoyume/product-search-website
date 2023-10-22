@@ -6,7 +6,7 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import FavoriteRenderer from './FavoriteRenderer';
 import './App.css';
 
-const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page, setPage}) => {
+const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page, setPage, wishlistId, setWishlistId}) => {
     const gridRef = useRef();
 
     const handleDetailSearch = (val) => {
@@ -38,6 +38,10 @@ const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page,
         );
     }
 
+    const FavoriteIconRenderer = (val) => {
+        return <FavoriteRenderer props={val.value} wishlistId={wishlistId} setWishlistId={setWishlistId} />
+    }
+
     const [columnDefs] = useState([
         { field: "#", width: "60px" },
         { field: "Image", width: "200px", cellRenderer: imageRenderer },
@@ -45,7 +49,7 @@ const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page,
         { field: "Price", width: "120px" },
         { field: "Shipping", width: "150px" },
         { field: "Zip", width: "130px" },
-        { field: "Favorite", width: "120px", cellRenderer: FavoriteRenderer }
+        { field: "Favorite", width: "120px", cellRenderer: FavoriteIconRenderer }
     ]);
 
     const items = result.findItemsAdvancedResponse[0].searchResult[0].item;
@@ -74,11 +78,22 @@ const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page,
     const tableData = items.map((item, index) => ({
         "#": index + 1,
         "Image": item.galleryURL[0] || defaultImage,
-        "Title": [item.title[0], item.itemId[0], item.shippingInfo, item.sellerInfo, item.returnsAccepted, item.storeInfo, item.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__)],
+        "Title": [item.title[0], item.itemId[0], item.shippingInfo, item.sellerInfo, item.returnsAccepted, item.storeInfo, item.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__),
+                    [
+                        item.galleryURL[0],
+                        [item.title[0], item.itemId[0], item.shippingInfo, item.sellerInfo, item.returnsAccepted, item.storeInfo, item.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__)],
+                        formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__),
+                        formatShipping(item?.shippingInfo?.[0]?.shippingServiceCost[0].__value__),
+                    ],],
         "Price": formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__),
         "Shipping": formatShipping(item?.shippingInfo?.[0]?.shippingServiceCost[0].__value__),
         "Zip": item?.postalCode[0] ? item?.postalCode[0] : "",
-        "Favorite": item.itemId[0],
+        "Favorite": [
+            item.galleryURL[0],
+            [item.title[0], item.itemId[0], item.shippingInfo, item.sellerInfo, item.returnsAccepted, item.storeInfo, item.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__)],
+            formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__),
+            formatShipping(item?.shippingInfo?.[0]?.shippingServiceCost[0].__value__),
+                    ],
     }));
 
     const [rowData] = useState(tableData);
@@ -98,7 +113,7 @@ const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page,
 
     const getRowStyle = (params) => {
         if (detail) {
-            if (params.data.Favorite === detail[1]) {
+            if (params.data.Favorite[1][1] === detail[1]) {
                 return { background: 'grey' };
             }
         }

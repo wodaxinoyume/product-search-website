@@ -9,6 +9,7 @@ import './App.css';
 const AppBottom = ({loading, result}) => {
     // when another search is triggered, reinitailized the state
     useEffect(() => {
+        handleDBIDSearch();
         setDetail(null);
         setDetailPage(false);
         setActiveKey('results');
@@ -17,6 +18,25 @@ const AppBottom = ({loading, result}) => {
         setDetailJson3(null);
         setPage(1);
     }, [result]);
+
+    const [wishlistId, setWishlistId] = useState(null);
+
+    const handleDBIDSearch = () => {
+        const endpoint = "http://localhost:8080/findAllId";
+
+        const url = new URL(endpoint);
+
+        fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+                const idArray = data.data.map(item => item._id);
+                setWishlistId(idArray);
+                console.log(wishlistId)
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
+    }
 
     const [activeKey, setActiveKey] = useState('results');
     
@@ -38,6 +58,7 @@ const AppBottom = ({loading, result}) => {
 
     const handleNavClick = (key) => {
         setActiveKey(key);
+        setDetailPage(false);
     };
 
     const contentToRender = useMemo(() => {
@@ -57,7 +78,9 @@ const AppBottom = ({loading, result}) => {
                         detailJson2={detailJson2} 
                         setDetailJson2={setDetailJson2}
                         detailJson3={detailJson3} 
-                        setDetailJson3={setDetailJson3} />;
+                        setDetailJson3={setDetailJson3}
+                        wishlistId={wishlistId}
+                        setWishlistId={setWishlistId} />;
             } else if (result === "") {
                 return null;
             } else if (!result?.findItemsAdvancedResponse?.[0]?.searchResult?.[0]) {
@@ -72,13 +95,38 @@ const AppBottom = ({loading, result}) => {
                         setDetailPage={setDetailPage} 
                         setNeedCall={setNeedCall}
                         page={page}
-                        setPage={setPage} />;
+                        setPage={setPage}
+                        wishlistId={wishlistId}
+                        setWishlistId={setWishlistId} />;
             }
         } else {
-            return <AppWishlist />;
+            if (detailPage) {
+                return <AppDetail 
+                        detail={detail} 
+                        setDetailPage={setDetailPage}
+                        needCall={needCall}
+                        setNeedCall={setNeedCall} 
+                        detailJson={detailJson} 
+                        setDetailJson={setDetailJson}
+                        detailJson2={detailJson2} 
+                        setDetailJson2={setDetailJson2}
+                        detailJson3={detailJson3} 
+                        setDetailJson3={setDetailJson3}
+                        wishlistId={wishlistId}
+                        setWishlistId={setWishlistId} />;
+            } else {
+                return <AppWishlist 
+                detail={detail} 
+                setDetail={setDetail}
+                setDetailPage={setDetailPage}
+                setNeedCall={setNeedCall}
+                wishlistId={wishlistId}
+                setWishlistId={setWishlistId} />;
+            }
         }
     }, [loading, activeKey, detailPage, result, detail, setDetail, setDetailPage, needCall, setNeedCall, 
-        detailJson, setDetailJson, detailJson2, setDetailJson2, detailJson3, setDetailJson3, page, setPage]);
+        detailJson, setDetailJson, detailJson2, setDetailJson2, detailJson3, setDetailJson3, page, setPage,
+        wishlistId, setWishlistId]);
 
     return (
         <>

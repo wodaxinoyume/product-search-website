@@ -203,3 +203,109 @@ app.get('/IPSuggest', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
+// establish connect with mongodb
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://resiki:zh991001@cluster0.ci3kqxx.mongodb.net/?retryWrites=true&w=majority";
+
+const client = new MongoClient(uri, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
+});
+
+async function initializeDatabase() {
+    try {
+        await client.connect();
+        const db = client.db("mydb");
+        const collection = db.collection("favorite");
+
+        await collection.createIndex({ _id: 1 });
+
+        console.log("Index created successfully");
+
+    } catch (err) {
+        console.error('Error initializing the database:', err);
+    }
+}
+
+initializeDatabase();
+
+app.get('/addItem', async (req, res) => {
+    try {
+        const encodedJsonString = req.query.object;
+        const jsonString = decodeURIComponent(encodedJsonString);
+        const myobj = JSON.parse(jsonString);
+
+        console.log(myobj);
+
+        const db = client.db("mydb");
+        const result = await db.collection("favorite").insertOne(myobj);
+
+        console.log("1 document inserted");
+        res.status(200).json({ message: 'Document inserted successfully' });
+    } catch (err) {
+        console.error('Error inserting document:', err);
+        res.status(500).json({ error: {err} });
+    }
+});
+
+app.get('/deleteItem', async (req, res) => {
+    try {
+        const encodedJsonString = req.query.object;
+        const jsonString = decodeURIComponent(encodedJsonString);
+        const myobj = JSON.parse(jsonString);
+
+        const db = client.db("mydb");
+        const result = await db.collection("favorite").deleteOne(myobj);
+
+        if (result.deletedCount === 1) {
+            console.log("1 document deleted");
+            res.status(200).json({ message: 'Document deleted successfully' });
+        } else {
+            console.error('Document not found');
+            res.status(404).json({ error: 'Document not found' });
+        }
+    } catch (err) {
+        console.error('Error deleting document:', err);
+        res.status(500).json({ error: 'Database operation error' });
+    }
+});
+
+app.get('/findAll', async (req, res) => {
+    try {
+        const myobj = {};
+        const db = client.db("mydb");
+        const result = await db.collection("favorite").find(myobj).toArray();
+
+        console.log("Documents found");
+        res.status(200).json({ message: 'Documents found successfully', data: result });
+    } catch (err) {
+        console.error('Error accessing the database:', err);
+        res.status(500).json({ error: 'Database operation error' });
+    }
+});
+
+app.get('/findAllId', async (req, res) => {
+    try {
+        const myobj = {};
+        const db = client.db("mydb");
+        const result = await db.collection("favorite").find(myobj, { projection: { _id: 1 } }).toArray();
+
+        console.log("Documents found");
+        res.status(200).json({ message: 'Documents found successfully', data: result });
+    } catch (err) {
+        console.error('Error accessing the database:', err);
+        res.status(500).json({ error: 'Database operation error' });
+    }
+});
+
+// Handle application exit to close the database connection
+process.on('SIGINT', () => {
+    client.close().then(() => {
+        console.log('Closed the database connection');
+        process.exit();
+    });
+});

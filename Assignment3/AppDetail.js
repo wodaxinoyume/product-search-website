@@ -8,7 +8,7 @@ import DetailPhoto from './DetailPhoto';
 import FavoriteRenderer from './FavoriteRenderer';
 import './App.css';
 
-const AppDetail = ({detail, setDetailPage, needCall, setNeedCall, detailJson, setDetailJson, detailJson2, setDetailJson2, detailJson3, setDetailJson3}) => { 
+const AppDetail = ({detail, setDetailPage, needCall, setNeedCall, detailJson, setDetailJson, detailJson2, setDetailJson2, detailJson3, setDetailJson3, wishlistId, setWishlistId}) => { 
     useEffect(() => {
         if (needCall) {
             handleDetailSearch();
@@ -134,7 +134,7 @@ const AppDetail = ({detail, setDetailPage, needCall, setNeedCall, detailJson, se
                                 <a onClick={handleFacebookRec} style={{cursor: "pointer"}}>
                                     <img style={{width: "40px", height: "40px"}} src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Facebook_icon_2013.svg/450px-Facebook_icon_2013.svg.png?20161223201621" />
                                 </a>
-                                <FavoriteRenderer />
+                                <FavoriteRenderer props={detail[8]} wishlistId={wishlistId} setWishlistId={setWishlistId} />
                             </Col>
                         </Row>
                     </Container>

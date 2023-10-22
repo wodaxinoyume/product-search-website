@@ -39,21 +39,11 @@ const handleDelete = (object) => {
         });
 }
 
-const FavoriteRenderer = ({props, wishlistId, setWishlistId}) => {
-    
-    const viewJson = () => {
-        const content = `<pre>${JSON.stringify(props, null, 2)}</pre>`
-        const newWindow = window.open('', '_blank');
-
-        newWindow.document.open();
-        newWindow.document.write(content);
-        newWindow.document.close();
-    }
+const FavoriteRendererInWishlist = ({props, wishlistId, setWishlistId, setDeleteId, deleteId}) => {
 
     const [isFavorite, setIsFavorite] = useState(wishlistId.includes(parseInt(props[1][1], 10)));
 
     const toggleFavorite = () => {
-        // viewJson();
         setIsFavorite(!isFavorite);
         
         const object = {
@@ -70,12 +60,12 @@ const FavoriteRenderer = ({props, wishlistId, setWishlistId}) => {
         
         if (isFavorite) {
             handleDelete(deleteObject);
+            setDeleteId(parseInt(props[1][1], 10)); // make wishlist refresh
             setWishlistId(wishlistId => wishlistId.filter(item => item !== parseInt(props[1][1], 10)));
-            console.log(wishlistId);
+            console.log(deleteId);
         } else {
             handleAdd(object);
             setWishlistId(wishlistId => [...wishlistId, parseInt(props[1][1], 10)]);
-            console.log(wishlistId);
         }
     };
 
@@ -88,4 +78,4 @@ const FavoriteRenderer = ({props, wishlistId, setWishlistId}) => {
     );
 };
 
-export default FavoriteRenderer;
+export default FavoriteRendererInWishlist;
