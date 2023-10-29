@@ -1,14 +1,46 @@
+// Copyright 2017 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+'use strict';
+
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const app = express();
 const OAuthToken = require('./ebay_oauth_token');
-const port = 8080;
 const ebayAppId = "HeZhou-resiki-PRD-172b2ae15-03fae87d";
+
+// redirect to the frontend
+const path = require('path');
+
+app.use(express.static(path.join(__dirname, 'build')));
+
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 app.use(cors());
 
 app.use(express.urlencoded({ extended: true }));
+
+// Start the server
+const PORT = parseInt(process.env.PORT) || 8080;
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}`);
+  console.log('Press Ctrl+C to quit.');
+});
+// [END gae_node_request_example]
 
 app.get('/search', async (req, res) => {
     try {
@@ -200,13 +232,10 @@ app.get('/IPSuggest', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
-
 // establish connect with mongodb
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://resiki:zh991001@cluster0.ci3kqxx.mongodb.net/?retryWrites=true&w=majority";
+// const uri = "mongodb+srv://resiki:zh991001@cluster0.ci3kqxx.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://uchiha:991001@cluster0.6dcrwmn.mongodb.net/?retryWrites=true&w=majority";
 
 const client = new MongoClient(uri, {
     serverApi: {
@@ -270,7 +299,7 @@ app.get('/deleteItem', async (req, res) => {
         }
     } catch (err) {
         console.error('Error deleting document:', err);
-        res.status(500).json({ error: 'Database operation error' });
+        res.status(500).json({ error: {err} });
     }
 });
 
@@ -284,7 +313,7 @@ app.get('/findAll', async (req, res) => {
         res.status(200).json({ message: 'Documents found successfully', data: result });
     } catch (err) {
         console.error('Error accessing the database:', err);
-        res.status(500).json({ error: 'Database operation error' });
+        res.status(500).json({ error: {err} });
     }
 });
 
@@ -298,7 +327,7 @@ app.get('/findAllId', async (req, res) => {
         res.status(200).json({ message: 'Documents found successfully', data: result });
     } catch (err) {
         console.error('Error accessing the database:', err);
-        res.status(500).json({ error: 'Database operation error' });
+        res.status(500).json({ error: {err} });
     }
 });
 
@@ -308,4 +337,6 @@ process.on('SIGINT', () => {
         console.log('Closed the database connection');
         process.exit();
     });
-});
+})
+
+module.exports = app;

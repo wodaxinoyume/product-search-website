@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Container, Button, ProgressBar, Tabs, Tab, Row, Col, Image } from 'react-bootstrap';
 import DetailProduct from './DetailProduct';
 import DetailShipping from './DetailShipping';
@@ -12,7 +12,7 @@ const AppDetail = ({detail, setDetailPage, needCall, setNeedCall, detailJson, se
     useEffect(() => {
         if (needCall) {
             handleDetailSearch();
-            // handlePhotoSearch();
+            handlePhotoSearch();
             handleSimilarSearch();
             setNeedCall(false);
         }
@@ -29,7 +29,8 @@ const AppDetail = ({detail, setDetailPage, needCall, setNeedCall, detailJson, se
     const handleDetailSearch = () => {
         setLoading(true);
 
-        const endpoint = "http://localhost:8080/detail";
+        // const endpoint = "http://localhost:8080/detail";
+        const endpoint = "https://rugged-shuttle-402803.wn.r.appspot.com/detail";
 
         const params = {
             "itemId": detail[1],
@@ -50,7 +51,8 @@ const AppDetail = ({detail, setDetailPage, needCall, setNeedCall, detailJson, se
     }
 
     const handlePhotoSearch = () => {
-        const endpoint = "http://localhost:8080/photo";
+        // const endpoint = "http://localhost:8080/photo";
+        const endpoint = "https://rugged-shuttle-402803.wn.r.appspot.com/photo";
 
         const params = {
             "productTitle": detail[0],
@@ -69,7 +71,8 @@ const AppDetail = ({detail, setDetailPage, needCall, setNeedCall, detailJson, se
     }
 
     const handleSimilarSearch = () => {
-        const endpoint = "http://localhost:8080/similar";
+        // const endpoint = "http://localhost:8080/similar";
+        const endpoint = "https://rugged-shuttle-402803.wn.r.appspot.com/similar";
 
         const params = {
             "itemId": detail[1],
@@ -115,6 +118,8 @@ const AppDetail = ({detail, setDetailPage, needCall, setNeedCall, detailJson, se
         window.open(facebookShareUrl, '_blank');
     }
 
+    const wishRef = useRef(wishlistId);
+
     return (
         <>
             {loading ? <ProgressBar animated now={60} /> : (
@@ -134,7 +139,7 @@ const AppDetail = ({detail, setDetailPage, needCall, setNeedCall, detailJson, se
                                 <a onClick={handleFacebookRec} style={{cursor: "pointer"}}>
                                     <img style={{width: "40px", height: "40px"}} src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Facebook_icon_2013.svg/450px-Facebook_icon_2013.svg.png?20161223201621" />
                                 </a>
-                                <FavoriteRenderer props={detail[8]} wishlistId={wishlistId} setWishlistId={setWishlistId} />
+                                <FavoriteRenderer props={detail[8]} wishlistId={wishlistId} setWishlistId={setWishlistId} wishRef={wishRef}/>
                             </Col>
                         </Row>
                     </Container>

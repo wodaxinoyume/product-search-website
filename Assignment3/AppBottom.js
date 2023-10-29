@@ -19,10 +19,15 @@ const AppBottom = ({loading, result}) => {
         setPage(1);
     }, [result]);
 
+    useEffect(() => {
+        handleDBIDSearch();
+    }, [])
+
     const [wishlistId, setWishlistId] = useState(null);
 
     const handleDBIDSearch = () => {
-        const endpoint = "http://localhost:8080/findAllId";
+        // const endpoint = "http://localhost:8080/findAllId";
+        const endpoint = "https://rugged-shuttle-402803.wn.r.appspot.com/findAllId";
 
         const url = new URL(endpoint);
 
@@ -141,7 +146,7 @@ const AppBottom = ({loading, result}) => {
                 </Nav>
             </Container>
 
-            <Container style={{marginTop: "10px"}}>
+            <Container key={page} style={{marginTop: "10px"}}>
                 {contentToRender}
             </Container>
         </>

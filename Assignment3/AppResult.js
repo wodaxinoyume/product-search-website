@@ -8,6 +8,7 @@ import './App.css';
 
 const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page, setPage, wishlistId, setWishlistId}) => {
     const gridRef = useRef();
+    const wishRef = useRef(wishlistId);
 
     const handleDetailSearch = (val) => {
         setDetail(val);
@@ -33,23 +34,23 @@ const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page,
     const titleRenderer = (props) => {
         return (
             <a title={props.value[0]} className='itemTitle' onClick={() => handleDetailSearch(props.value)} >
-                {props.value[0]}
+                {props.value[0] ? props.value[0] : "default title"}
             </a>
         );
     }
 
     const FavoriteIconRenderer = (val) => {
-        return <FavoriteRenderer props={val.value} wishlistId={wishlistId} setWishlistId={setWishlistId} />
+        return <FavoriteRenderer props={val.value} wishlistId={wishlistId} setWishlistId={setWishlistId} wishRef={wishRef}/>
     }
 
     const [columnDefs] = useState([
-        { field: "#", width: "60px" },
-        { field: "Image", width: "200px", cellRenderer: imageRenderer },
-        { field: "Title", width: "490px", cellRenderer: titleRenderer },
-        { field: "Price", width: "120px" },
-        { field: "Shipping", width: "150px" },
-        { field: "Zip", width: "130px" },
-        { field: "Favorite", width: "120px", cellRenderer: FavoriteIconRenderer }
+        { field: "#", width: "60px", suppressMovable: true },
+        { field: "Image", width: "200px", cellRenderer: imageRenderer, suppressMovable: true },
+        { field: "Title", width: "490px", cellRenderer: titleRenderer, suppressMovable: true },
+        { field: "Price", width: "120px", suppressMovable: true },
+        { field: "Shipping", width: "150px", suppressMovable: true },
+        { field: "Zip", width: "130px", suppressMovable: true },
+        { field: "Favorite", width: "120px", cellRenderer: FavoriteIconRenderer, suppressMovable: true }
     ]);
 
     const items = result.findItemsAdvancedResponse[0].searchResult[0].item;
@@ -78,16 +79,16 @@ const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page,
     const tableData = items.map((item, index) => ({
         "#": index + 1,
         "Image": item.galleryURL[0] || defaultImage,
-        "Title": [item.title[0], item.itemId[0], item.shippingInfo, item.sellerInfo, item.returnsAccepted, item.storeInfo, item.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__),
+        "Title": [item.title?.[0], item.itemId[0], item.shippingInfo, item.sellerInfo, item.returnsAccepted, item.storeInfo, item.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__),
                     [
                         item.galleryURL[0],
                         [item.title[0], item.itemId[0], item.shippingInfo, item.sellerInfo, item.returnsAccepted, item.storeInfo, item.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__)],
-                        formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__),
-                        formatShipping(item?.shippingInfo?.[0]?.shippingServiceCost[0].__value__),
+                        formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice?.[0]?.__value__),
+                        formatShipping(item?.shippingInfo?.[0]?.shippingServiceCost?.[0]?.__value__),
                     ],],
-        "Price": formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__),
-        "Shipping": formatShipping(item?.shippingInfo?.[0]?.shippingServiceCost[0].__value__),
-        "Zip": item?.postalCode[0] ? item?.postalCode[0] : "",
+        "Price": formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice?.[0]?.__value__),
+        "Shipping": formatShipping(item?.shippingInfo?.[0]?.shippingServiceCost?.[0]?.__value__),
+        "Zip": item?.postalCode?.[0] ? item?.postalCode[0] : "",
         "Favorite": [
             item.galleryURL[0],
             [item.title[0], item.itemId[0], item.shippingInfo, item.sellerInfo, item.returnsAccepted, item.storeInfo, item.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__)],
@@ -100,6 +101,7 @@ const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page,
 
     const gridOptions = {
         domLayout: 'autoHeight',
+        suppressDragLeaveHidesColumns: true,
     };
 
     const getRowHeight = () => {

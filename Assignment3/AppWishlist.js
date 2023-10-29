@@ -18,7 +18,8 @@ const AppWishlist = ({detail, setDetail, setDetailPage, setNeedCall, wishlistId,
     }, [deleteId]);
 
     const handleDBSearch = () => {
-        const endpoint = "http://localhost:8080/findAll";
+        // const endpoint = "http://localhost:8080/findAll";
+        const endpoint = "https://rugged-shuttle-402803.wn.r.appspot.com/findAll";
 
         const url = new URL(endpoint);
 
@@ -35,7 +36,7 @@ const AppWishlist = ({detail, setDetail, setDetailPage, setNeedCall, wishlistId,
 
     return (
         dbResult === null ? <AppNoRecords /> : (
-            <div key={dbResult}>
+            <div key={dbResult} >
                 <AppWishlistTable 
                 detail={detail} 
                 setDetail={setDetail} 
@@ -108,12 +109,12 @@ const AppWishlistTable = ({detail, setDetail, setDetailPage, setNeedCall, result
     }
 
     const [columnDefs] = useState([
-        { field: "#", width: "60px", cellRenderer: indexRenderer },
-        { field: "Image", width: "200px", cellRenderer: imageRenderer },
-        { field: "Title", width: "620px", cellRenderer: titleRenderer },
-        { field: "Price", width: "120px" },
-        { field: "Shipping Option", width: "150px" },
-        { field: "Favorite", width: "120px", cellRenderer: FavoriteIconRenderer }
+        { field: "#", width: "60px", cellRenderer: indexRenderer, suppressMovable: true },
+        { field: "Image", width: "200px", cellRenderer: imageRenderer, suppressMovable: true},
+        { field: "Title", width: "620px", cellRenderer: titleRenderer, suppressMovable: true },
+        { field: "Price", width: "120px", suppressMovable: true },
+        { field: "Shipping Option", width: "150px", suppressMovable: true },
+        { field: "Favorite", width: "120px", cellRenderer: FavoriteIconRenderer, suppressMovable: true }
     ]);
 
     const defaultImage = "https://www.bobswatches.com/rolex-blog/wp-content/uploads/2017/01/ebay-inventory-management-post.jpg";
@@ -131,6 +132,7 @@ const AppWishlistTable = ({detail, setDetail, setDetailPage, setNeedCall, result
 
     const gridOptions = {
         domLayout: 'autoHeight',
+        suppressDragLeaveHidesColumns: true,
     };
 
     const getRowHeight = (params) => {

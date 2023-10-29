@@ -1,4 +1,5 @@
 import React from 'react';
+import { Card } from 'react-bootstrap';
 import './App.css';
 
 const DetailPhoto = (detailJson2) => {
@@ -17,18 +18,24 @@ const DetailPhoto = (detailJson2) => {
     }
 
     return (
-        <div style={{display: "flex", justifyContent: "center", flexDirection: "row-reverse", marginTop: "10px"}}>
-            <div className='photoDisplay'>
-                {images.map((item, index) => (
-                    <div key={index} style={{marginBottom: "10px"}}>
-                        <a href={item} target="_target">
-                            <img src={item} alt={item} style={{ border: '10px solid #000', width: "100%" }} />
-                        </a>
-                    </div>
-                ))}
-
+        <>
+            {detailJson2?.detailJson?.items ? (null) : (
+                <Card>
+                    <Card.Body className='noRecords'>No Records. Here are some default pictures!</Card.Body>
+                </Card>
+            )}
+            <div style={{display: "flex", justifyContent: "center", flexDirection: "row-reverse", marginTop: "10px"}}>
+                <div className='photoDisplay'>
+                    {images.map((item, index) => (
+                        <div key={index} style={{marginBottom: "10px"}}>
+                            <a href={item} target="_target">
+                                <img src={item} alt={item} style={{ border: '10px solid #000', width: "100%" }} />
+                            </a>
+                        </div>
+                    ))}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 

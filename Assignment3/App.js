@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { MdSearch, MdClearAll } from 'react-icons/md';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
+import Autocomplete from '@mui/material/Autocomplete';
 import AppBottom from './AppBottom';
 import './App.css'
 
 const App = () => {
-    const regex = /[^0-9]/;
+    const zipcodeRegex = /[^0-9]/;
     const [isOtherSelected, setIsOtherSelected] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
     const [location, setLocation] = useState("");
@@ -21,6 +21,9 @@ const App = () => {
     const [distance, setDistance] = useState("10");
     const [result, setResult] = useState("");
     const [loading, setLoading] = useState(false);
+    const [keywordError, setKeywordError] = useState("");
+    const [zipcodeError, setZipcodeError] = useState("");
+    const [autocompleteVisible, setAutocompleteVisible] = useState(false);
 
     useEffect(() => {
         fetchPostal();
@@ -42,6 +45,9 @@ const App = () => {
         setIsOtherSelected(event.target.value === 'Other');
         setLocation('');
         setZipcode('');
+        if (event.target.value !== 'Other') {
+            setZipcodeError('');
+        }
         // call ipinfo api to get current zipcode
         if (event.target.value !== 'Other') {
             fetchPostal();
@@ -54,7 +60,9 @@ const App = () => {
         setZipcode(event.target.value);
         // console.log("after: " + location);
         // call geonames api to autocomplete
-        const url = `http://localhost:8080/IPSuggest?IP=${event.target.value}`;
+        // const url = `http://localhost:8080/IPSuggest?IP=${event.target.value}`;
+        const url = `https://rugged-shuttle-402803.wn.r.appspot.com/IPSuggest?IP=${event.target.value}`;
+
         fetch(url)
             .then((response) => response.json())
             .then((data) => {
@@ -67,14 +75,43 @@ const App = () => {
             });
     }
 
+    const handleZipcodeBlur = () => {
+        setTimeout(() => {
+            setAutocompleteVisible(false);
+        }, 200);
+        if (location.trim() === "") {
+            setZipcodeError("Please enter a zipcode.");
+        }
+    }
+
+    const handleZipcodeFocus = () => {
+        setAutocompleteVisible(true);
+        if (location.trim() === "") {
+            setZipcodeError("");
+        }
+    }
+
     const handleKeywordChange = (event) => {
         setKeyword(event.target.value);
+    }
+
+    const handleKeywordBlur = () => {
+        if (keyword.trim() === "") {
+            setKeywordError("Please enter a keyword.");
+        }
+    }
+
+    const handleKeywordFocus = () => {
+        if (keyword.trim() === "") {
+            setKeywordError("");
+        }
     }
 
     const handleSearch = (event) => {
         setLoading(true);
 
-        const endpoint = "http://localhost:8080/search";
+        // const endpoint = "http://localhost:8080/search";
+        const endpoint = "https://rugged-shuttle-402803.wn.r.appspot.com/search";
 
         const params = {
             "keywords": keyword,
@@ -132,6 +169,25 @@ const App = () => {
         setLocation("");
         setSuggestions([]);
         fetchPostal();
+        setKeywordError("");
+        setZipcodeError("");
+    }
+
+    const handleSuggestionClick = (item) => {
+        setLocation(item);
+        setZipcode(item);
+        const url = `https://rugged-shuttle-402803.wn.r.appspot.com/IPSuggest?IP=${item}`;
+
+        fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+                const postalCodes = data.postalCodes.map((item) => item.postalCode);
+                setSuggestions(postalCodes);
+                console.log(postalCodes)
+            })
+            .catch((error) => {
+                setSuggestions([]);
+            });
     }
 
     return (
@@ -145,7 +201,16 @@ const App = () => {
                                 Keyword<span style={{color: 'red'}}>*</span>
                             </Form.Label>
                             <Col sm="9">
-                                <Form.Control value={keyword} onChange={handleKeywordChange} placeholder="Enter Product Name(eg. iPhone 8)"/>
+                                <Form.Control 
+                                value={keyword} 
+                                onChange={handleKeywordChange} 
+                                onBlur={handleKeywordBlur}
+                                onFocus={handleKeywordFocus}
+                                isInvalid={!!keywordError}
+                                placeholder="Enter Product Name(eg. iPhone 8)"/>
+                                <Form.Control.Feedback type="invalid">
+                                    {keywordError}
+                                </Form.Control.Feedback>
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row} className="align-items-center"  style={{ marginBottom: '15px'}}>
@@ -209,32 +274,39 @@ const App = () => {
                                 type="radio" 
                                 name="zipbox"
                                 value='Other' 
-                                // label='Other. Please specify zip code:' 
-                                label={
-                                    <Col>
-                                        <div className="flex-container">
-                                            <span className='space'>Other. Please specify zip</span>
-                                            <span>code:</span>
-                                        </div>
-                                    </Col>
-                                }
+                                label='Other. Please specify zip code:' 
+                                // label={
+                                //     <Col>
+                                //         <div className="flex-container">
+                                //             <span className='space'>Other. Please specify zip</span>
+                                //             <span>code:</span>
+                                //         </div>
+                                //     </Col>
+                                // }
                                 checked={isOtherSelected}
                                 onChange={handleRadioChange}
                                 style={{marginRight: '15px'}} />
-                            
-                                <Form.Control
-                                value={location}
-                                onChange={handleLocationChange}
-                                disabled={!isOtherSelected}
-                                list="locationSuggestions"
-                                maxLength={5}
-                                style={{marginTop: '10px'}}/>
 
-                                <datalist id="locationSuggestions">
-                                    {suggestions.map((suggestion, index) => (
-                                        <option value={suggestion} key={index} />
-                                    ))}
-                                </datalist>
+                                <div className='autocomplete'>
+                                    <Form.Control
+                                    value={location}
+                                    onChange={handleLocationChange}
+                                    onBlur={handleZipcodeBlur}
+                                    onFocus={handleZipcodeFocus}
+                                    isInvalid={!!zipcodeError && isOtherSelected}
+                                    readOnly={!isOtherSelected}
+                                    maxLength={5}
+                                    style={{marginTop: '10px'}}/>
+
+                                    {isOtherSelected && location.trim().length !== 0 && autocompleteVisible &&
+                                    <div className='autocomplete-items'>
+                                        {suggestions.map((item, index) => (
+                                            <div key={index} onClick={() => handleSuggestionClick(item)}>{item}</div>
+                                        ))}
+                                    </div>}
+
+                                    <Form.Control.Feedback type="invalid">{zipcodeError}</Form.Control.Feedback>
+                                </div>
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row}>
@@ -243,7 +315,7 @@ const App = () => {
                                 variant="light" 
                                 className="align-items-center"
                                 onClick={handleSearch}
-                                disabled={keyword==="" || zipcode.length!==5 || regex.test(zipcode)} 
+                                disabled={keyword==="" || zipcode.length!==5 || zipcodeRegex.test(zipcode)} 
                                 style={{display: 'flex', marginRight: '25px'}}>
                                     <MdSearch style={{fontSize: '25px'}} />Search
                                 </Button>

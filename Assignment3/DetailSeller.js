@@ -3,6 +3,8 @@ import { Container, Row, Col, Card } from 'react-bootstrap';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { FcCheckmark } from 'react-icons/fc';
 import { AiOutlineClose } from 'react-icons/ai';
+import MdStars from '@mui/icons-material/Stars';
+import MdStarRate from '@mui/icons-material/StarRate';
 import 'react-circular-progressbar/dist/styles.css';
 import './App.css';
 
@@ -16,7 +18,7 @@ const DetailSeller = (info, detailJson) => {
         } else if (props.name === 'Popularity') {
             return (
                 <div style={{ width: 50, height: 50 }}>
-                    <CircularProgressbar value={props.value} maxValue={100} text={props.value} />
+                    <CircularProgressbar value={props.value} maxValue={100} text={props.value} styles={{path : {stroke: "#008000"}}} />
                 </div>    
             );
         } else if (props.name === "Top Rated") {
@@ -25,6 +27,34 @@ const DetailSeller = (info, detailJson) => {
             } else {
                 return <AiOutlineClose style={{color: "red", fontSize: "20px"}} />;
             }
+        } else if (props.name === 'Feedback Rating Star') {
+            if (props.value === "Yellow") {
+                return <MdStarRate style={{color: "yellow", fontSize: "40px"}} />;
+            } else if (props.value === "Blue") {
+                return <MdStarRate style={{color: "blue", fontSize: "40px"}} />;
+            } else if (props.value === "Turquoise") {
+                return <MdStarRate style={{color: "#40E0D0", fontSize: "40px"}} />;
+            } else if (props.value === "Purple") {
+                return <MdStarRate style={{color: "purple", fontSize: "40px"}} />;
+            } else if (props.value === "Red") {
+                return <MdStarRate style={{color: "red", fontSize: "40px"}} />;
+            } else if (props.value === "Green") {
+                return <MdStarRate style={{color: "green", fontSize: "40px"}} />;
+            } else if (props.value === "YellowShooting") {
+                return <MdStars style={{color: "yellow", fontSize: "40px"}} />;
+            } else if (props.value === "TurquoiseShooting") {
+                return <MdStars style={{color: "#40E0D0", fontSize: "40px"}} />;
+            } else if (props.value === "PurpleShooting") {
+                return <MdStars style={{color: "purple", fontSize: "40px"}} />;
+            } else if (props.value === "RedShooting") {
+                return <MdStars style={{color: "red", fontSize: "40px"}} />;
+            } else if (props.value === "GreenShooting") {
+                return <MdStars style={{color: "green", fontSize: "40px"}} />;
+            } else if (props.value === "SilverShooting") {
+                return <MdStars style={{color: "silver", fontSize: "40px"}} />;
+            }
+
+            return props.value;
         }
 
         return props.value;
@@ -44,8 +74,8 @@ const DetailSeller = (info, detailJson) => {
         rowData.push({name: 'Popularity', value: info.info[0].positiveFeedbackPercent })
     }
   
-    if (info?.info[0]?.feedbackRatingStar) {
-        rowData.push({name: 'Feedback Rating Star', value: info.info[0].feedbackRatingStar})
+    if (info?.info[0]?.feedbackRatingStar?.[0]) {
+        rowData.push({name: 'Feedback Rating Star', value: info.info[0].feedbackRatingStar[0]})
     }
   
     if (info?.info[0]?.topRatedSeller) {
@@ -80,10 +110,10 @@ const DetailSeller = (info, detailJson) => {
                         borderBottom: "0px solid #68686e",
                         borderRadius: "0px" }}>
                     <Row>
-                        <Col lg={5} sm={12} style={{ marginLeft: "10px", height: item.name === "Popularity" || item.name === "Feedback Rating Star" ? "70px" : "50px", display: 'flex', alignItems: 'center'  }}>
+                        <Col lg={5} sm={12} style={{ marginLeft: "10px", height: item.name === "Popularity" ? "70px" : "50px", display: 'flex', alignItems: 'center'  }}>
                             {item.name}
                         </Col>
-                        <Col lg={6} sm={12} style={{ marginLeft: "10px", height: item.name === "Popularity" || item.name === "Feedback Rating Star" ? "70px" : "50px", display: 'flex', alignItems: 'center'  }}>
+                        <Col lg={6} sm={12} style={{ marginLeft: "10px", height: item.name === "Popularity" ? "70px" : "50px", display: 'flex', alignItems: 'center'  }}>
                             {valueRenderer(item)}
                         </Col>
                     </Row>

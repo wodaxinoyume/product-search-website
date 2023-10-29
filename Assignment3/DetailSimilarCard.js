@@ -98,7 +98,7 @@ const DetailSimilarCard = (detailJson3) => {
                             </Col>
                             <Col lg={10} sm={12} style={{ flex: 1, padding: '10px', alignItems: 'start' }}>
                                 <div style={{margin: "10px"}}>
-                                    <span style={{ color: 'blue' }}>{item.title}</span><br />
+                                    <span style={{ color: 'blue' }}><a href={item.itemUrl} target="_blank" className="itemTitle">{item.title}</a></span><br />
                                     <span style={{ color: 'green' }}>Price: ${item.price.toFixed(2)}</span><br />
                                     <span style={{ color: 'orange' }}>Shipping Price: ${item.shippingPrice.toFixed(2)}</span><br />
                                     <span style={{ color: 'white' }}>Days Left: {item.days}</span>

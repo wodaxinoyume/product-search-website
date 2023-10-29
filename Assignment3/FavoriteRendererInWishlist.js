@@ -3,36 +3,20 @@ import { Button } from 'react-bootstrap';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 
-const handleAdd = (object) => {
-    object.title[0] = encodeURIComponent(object.title[0]);
-    const jsonString = JSON.stringify(object);
-    const encodedJsonString = encodeURIComponent(jsonString);
-
-    const endpoint = `http://localhost:8080/addItem?object=${encodedJsonString}`;
-
-    const url = new URL(endpoint);
-    fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-            console.log('add succeed');
-        })
-        .catch((error) => {
-            console.error('Error fetching data:', error);
-        });
-}
-
-const handleDelete = (object) => {
+const handleDelete = (object, setDeleteId) => {
 
     const jsonString = JSON.stringify(object);
     const encodedJsonString = encodeURIComponent(jsonString);
 
-    const endpoint = `http://localhost:8080/deleteItem?object=${encodedJsonString}`;
+    // const endpoint = `http://localhost:8080/deleteItem?object=${encodedJsonString}`;
+    const endpoint = `https://rugged-shuttle-402803.wn.r.appspot.com/deleteItem?object=${encodedJsonString}`;
 
     const url = new URL(endpoint);
     fetch(url)
         .then((response) => response.json())
         .then((data) => {
             console.log('delete succeed');
+            setDeleteId("success");
         })
         .catch((error) => {
             console.error('Error fetching data:', error);
@@ -44,7 +28,8 @@ const FavoriteRendererInWishlist = ({props, wishlistId, setWishlistId, setDelete
     const [isFavorite, setIsFavorite] = useState(wishlistId.includes(parseInt(props[1][1], 10)));
 
     const toggleFavorite = () => {
-        setIsFavorite(!isFavorite);
+        setIsFavorite(false);
+        setDeleteId(parseInt(props[1][1], 10)); // make wishlist refresh
         
         const object = {
             "_id": parseInt(props[1][1], 10),
@@ -59,14 +44,10 @@ const FavoriteRendererInWishlist = ({props, wishlistId, setWishlistId, setDelete
         }
         
         if (isFavorite) {
-            handleDelete(deleteObject);
-            setDeleteId(parseInt(props[1][1], 10)); // make wishlist refresh
+            handleDelete(deleteObject, setDeleteId);
             setWishlistId(wishlistId => wishlistId.filter(item => item !== parseInt(props[1][1], 10)));
             console.log(deleteId);
-        } else {
-            handleAdd(object);
-            setWishlistId(wishlistId => [...wishlistId, parseInt(props[1][1], 10)]);
-        }
+        } // do nothing because no need to add!
     };
 
     return (
