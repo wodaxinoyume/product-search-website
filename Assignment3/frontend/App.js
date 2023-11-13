@@ -24,6 +24,7 @@ const App = () => {
     const [keywordError, setKeywordError] = useState("");
     const [zipcodeError, setZipcodeError] = useState("");
     const [autocompleteVisible, setAutocompleteVisible] = useState(false);
+    const [clearNum, setClearNum] = useState(0);
 
     useEffect(() => {
         fetchPostal();
@@ -62,6 +63,7 @@ const App = () => {
         // call geonames api to autocomplete
         // const url = `http://localhost:8080/IPSuggest?IP=${event.target.value}`;
         const url = `https://rugged-shuttle-402803.wn.r.appspot.com/IPSuggest?IP=${event.target.value}`;
+        // const url = `http://api.geonames.org/postalCodeSearchJSON?postalcode_startsWith=${event.target.value}&maxRows=5&username=wodaxinoyume&country=US`
 
         fetch(url)
             .then((response) => response.json())
@@ -128,10 +130,6 @@ const App = () => {
             params["used"] = "true";
         }
 
-        if (unspecified) {
-            params["unspecified"] = "true";
-        }
-
         if (pickup) {
             params["localPickup"] = "true";
         }
@@ -171,6 +169,7 @@ const App = () => {
         fetchPostal();
         setKeywordError("");
         setZipcodeError("");
+        setClearNum(clearNum + 1);
     }
 
     const handleSuggestionClick = (item) => {
@@ -315,7 +314,7 @@ const App = () => {
                                 variant="light" 
                                 className="align-items-center"
                                 onClick={handleSearch}
-                                disabled={keyword==="" || zipcode.length!==5 || zipcodeRegex.test(zipcode)} 
+                                disabled={keyword.trim()==="" || zipcode.length!==5 || zipcodeRegex.test(zipcode)} 
                                 style={{display: 'flex', marginRight: '25px'}}>
                                     <MdSearch style={{fontSize: '25px'}} />Search
                                 </Button>
@@ -332,7 +331,7 @@ const App = () => {
                 </Container>
             </Container>
 
-            <AppBottom loading={loading} result={result} />
+            <AppBottom loading={loading} result={result} key={clearNum} />
         </>
     );
 };

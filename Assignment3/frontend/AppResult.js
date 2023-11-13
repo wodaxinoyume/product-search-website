@@ -3,6 +3,7 @@ import { Container, Button, Pagination } from 'react-bootstrap';
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
+import Tooltip from '@mui/material/Tooltip';
 import FavoriteRenderer from './FavoriteRenderer';
 import './App.css';
 
@@ -33,9 +34,11 @@ const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page,
 
     const titleRenderer = (props) => {
         return (
-            <a title={props.value[0]} className='itemTitle' onClick={() => handleDetailSearch(props.value)} >
-                {props.value[0] ? props.value[0] : "default title"}
-            </a>
+            <Tooltip title={props.value[0]} >
+                <a className='itemTitle' onClick={() => handleDetailSearch(props.value)} >
+                    {props.value[0] ? props.value[0] : "N/A"}
+                </a>
+            </Tooltip>
         );
     }
 
@@ -61,14 +64,14 @@ const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page,
 
     const formatPrice = (price) => {
         if (!price) {
-            return "";
+            return "N/A";
         }
         return `$${parseFloat(price).toFixed(2)}`;
     }
 
     const formatShipping = (shippingCost) => {
         if (!shippingCost) {
-            return "";
+            return "N/A";
         }
         const cost = parseFloat(shippingCost);
         return cost === 0 ? "Free Shipping" : `$${cost.toFixed(2)}`;
@@ -78,11 +81,11 @@ const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page,
 
     const tableData = items.map((item, index) => ({
         "#": index + 1,
-        "Image": item.galleryURL[0] || defaultImage,
-        "Title": [item.title?.[0], item.itemId[0], item.shippingInfo, item.sellerInfo, item.returnsAccepted, item.storeInfo, item.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__),
+        "Image": item?.galleryURL?.[0] || defaultImage,
+        "Title": [item?.title?.[0], item?.itemId?.[0], item?.shippingInfo, item?.sellerInfo, item?.returnsAccepted, item?.storeInfo, item?.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice?.[0]?.__value__),
                     [
-                        item.galleryURL[0],
-                        [item.title[0], item.itemId[0], item.shippingInfo, item.sellerInfo, item.returnsAccepted, item.storeInfo, item.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__)],
+                        item?.galleryURL?.[0],
+                        [item?.title?.[0], item?.itemId?.[0], item?.shippingInfo, item?.sellerInfo, item?.returnsAccepted, item?.storeInfo, item?.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice?.[0]?.__value__)],
                         formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice?.[0]?.__value__),
                         formatShipping(item?.shippingInfo?.[0]?.shippingServiceCost?.[0]?.__value__),
                     ],],
@@ -90,10 +93,10 @@ const AppResult = ({result, detail, setDetail, setDetailPage, setNeedCall, page,
         "Shipping": formatShipping(item?.shippingInfo?.[0]?.shippingServiceCost?.[0]?.__value__),
         "Zip": item?.postalCode?.[0] ? item?.postalCode[0] : "",
         "Favorite": [
-            item.galleryURL[0],
-            [item.title[0], item.itemId[0], item.shippingInfo, item.sellerInfo, item.returnsAccepted, item.storeInfo, item.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__)],
-            formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice[0].__value__),
-            formatShipping(item?.shippingInfo?.[0]?.shippingServiceCost[0].__value__),
+            item?.galleryURL?.[0],
+            [item?.title?.[0], item?.itemId?.[0], item?.shippingInfo, item?.sellerInfo, item?.returnsAccepted, item?.storeInfo, item?.viewItemURL, formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice?.[0]?.__value__)],
+            formatPrice(item?.sellingStatus?.[0]?.convertedCurrentPrice?.[0]?.__value__),
+            formatShipping(item?.shippingInfo?.[0]?.shippingServiceCost?.[0]?.__value__),
                     ],
     }));
 

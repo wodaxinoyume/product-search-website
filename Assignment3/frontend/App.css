@@ -119,6 +119,7 @@
   color: black;
 }
 
+/*from "https://www.w3schools.com/howto/howto_js_autocomplete.asp"*/
 .autocomplete-items {
     position: absolute;
     border: 1px solid #d4d4d4;
@@ -146,4 +147,10 @@
     position: relative;
     display: inline-block;
     width: 100%;
+}
+
+/* from "https://stackoverflow.com/questions/46249541/change-arrow-colors-in-bootstraps-carousel" */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: black;
 }

@@ -124,7 +124,7 @@ const AppDetail = ({detail, setDetailPage, needCall, setNeedCall, detailJson, se
         <>
             {loading ? <ProgressBar animated now={60} /> : (
                 <>
-                    <h3 style={{textAlign: "center"}}>{detail[0]}</h3>
+                    <h4 style={{textAlign: "center"}}>{detail[0]}</h4>
                     <Container>
                         <Row>
                             <Col xs={10} className="d-flex justify-content-start">

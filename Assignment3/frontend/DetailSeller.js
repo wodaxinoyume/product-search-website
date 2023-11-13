@@ -66,19 +66,19 @@ const DetailSeller = (info, detailJson) => {
 
     const rowData = [];
 
-    if (info?.info[0]?.feedbackScore) {
+    if (info?.info?.[0]?.feedbackScore) {
         rowData.push({name: 'Feedback Score', value: info.info[0].feedbackScore})
     }
   
-    if (info?.info[0]?.positiveFeedbackPercent) {
+    if (info?.info?.[0]?.positiveFeedbackPercent) {
         rowData.push({name: 'Popularity', value: info.info[0].positiveFeedbackPercent })
     }
   
-    if (info?.info[0]?.feedbackRatingStar?.[0]) {
+    if (info?.info?.[0]?.feedbackRatingStar?.[0]) {
         rowData.push({name: 'Feedback Rating Star', value: info.info[0].feedbackRatingStar[0]})
     }
   
-    if (info?.info[0]?.topRatedSeller) {
+    if (info?.info?.[0]?.topRatedSeller) {
         rowData.push({name: 'Top Rated', value: info.info[0].topRatedSeller === 'true' })
     }
   
@@ -98,7 +98,7 @@ const DetailSeller = (info, detailJson) => {
             <Card style={{color: "white", backgroundColor: mycolor2, borderRadius: "0px", display: 'flex', alignItems: 'center', justifyContent: "center" }}>
                 <Row style={{height: "60px"}}>
                     <Col style={{display: 'flex', alignItems: 'center', justifyContent: "center"}}>
-                        <h4>{info?.info[0]?.sellerUserName ? info.info[0].sellerUserName : ""}</h4>
+                        <h4>{info?.info?.[0]?.sellerUserName ? info.info[0].sellerUserName : ""}</h4>
                     </Col>
                 </Row>
             </Card>

@@ -23,15 +23,15 @@ const DetailShipping = (info, detailJson) => {
 
     const rowData = [];
 
-    if (info?.info[0]?.shippingServiceCost?.[0]?.__value__) {
+    if (info?.info?.[0]?.shippingServiceCost?.[0]?.__value__) {
         rowData.push({ name: 'Shipping Cost', value: info.info[0].shippingServiceCost[0].__value__ === "0.0" ? 'Free Shipping' : "$" + info.info[0].shippingServiceCost[0].__value__})
     }
 
-    if (info?.info[0]?.shipToLocations?.[0]) {
+    if (info?.info?.[0]?.shipToLocations?.[0]) {
         rowData.push({ name: 'Shipping Locations', value: info.info[0].shipToLocations[0] });
     }
 
-    if (info?.info[0]?.handlingTime?.[0]) {
+    if (info?.info?.[0]?.handlingTime?.[0]) {
         let day = " Days";
         if (info.info[0].handlingTime[0] == "0" || info.info[0].handlingTime[0] === "1") {
             day = " Day";
@@ -39,11 +39,11 @@ const DetailShipping = (info, detailJson) => {
         rowData.push({ name: 'Handling time', value: info.info[0].handlingTime[0] + day });
     }
 
-    if (info?.info[0]?.expeditedShipping?.[0]) {
+    if (info?.info?.[0]?.expeditedShipping?.[0]) {
         rowData.push({ name: 'Expedited Shipping', value: info.info[0].expeditedShipping[0] === 'true' });
     }
 
-    if (info?.info[0]?.oneDayShippingAvailable?.[0]) {
+    if (info?.info?.[0]?.oneDayShippingAvailable?.[0]) {
         rowData.push({ name: 'One Day Shipping', value: info.info[0].oneDayShippingAvailable[0] === 'true' });
     }
 

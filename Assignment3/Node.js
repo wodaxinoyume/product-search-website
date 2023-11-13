@@ -161,7 +161,7 @@ app.get('/photo', async (req, res) => {
     try {
         const endpoint = "https://www.googleapis.com/customsearch/v1"
 
-        const apiKey = "AIzaSyASUztzWnFBg_O9MpQrAupASUGM-f603NE";
+        const apiKey = "AIzaSyB7oHZfTsJh99kd6C1wDuM8vbz4A0F4daY";
         const engineID = "73cb99b44c16e4668";
 
         const productTitle = req.query.productTitle || "iPhone14";
@@ -218,7 +218,7 @@ app.get('/similar', async (req, res) => {
 
 app.get('/IPSuggest', async (req, res) => {
     try {
-        const url = `http://api.geonames.org/postalCodeSearchJSON?postalcode_startsWith=${req.query.IP}&maxRows=5&username=wodaxinoyume&country=US`
+        const url = `http://api.geonames.org/postalCodeSearchJSON?postalcode_startsWith=${req.query.IP}&maxRows=5&username=resiki&country=US`
 
         const response = await axios.get(url);
 

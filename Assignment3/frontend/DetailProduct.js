@@ -1,21 +1,13 @@
 import React, { useState } from 'react';
-import { Container, Modal, Button, Image, Card, Row, Col } from 'react-bootstrap';
+import { Container, Modal, Button, Card, Row, Col, Carousel } from 'react-bootstrap';
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 import './App.css';
 
 function PhotoModal(props) {
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [index, setIndex] = useState(0);
 
-    const previousImage = () => {
-        if (currentImageIndex > 0) {
-            setCurrentImageIndex(currentImageIndex - 1);
-        }
-    };
-
-    const nextImage = () => {
-        if (currentImageIndex < props.photoURL.length - 1) {
-            setCurrentImageIndex(currentImageIndex + 1);
-        }
+    const handleSelect = (selectedIndex) => {
+        setIndex(selectedIndex);
     };
 
     if (!props.photoURL || props.photoURL.length === 0) {
@@ -23,37 +15,27 @@ function PhotoModal(props) {
     }
 
     return (
-        <Modal
-        {...props}
-        size="md"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-        >
-        <Modal.Header closeButton>
-            <Modal.Title id="contained-modal-title-vcenter">
-            Product Images
-            </Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ position: 'relative', textAlign: 'center' }}>
-            <div style={{ display: 'inline-block', position: 'relative', marginTop: '0 20px' }}>
-                <Image
-                    src={props.photoURL[currentImageIndex]}
-                    fluid
-                    style={{ border: '10px solid #000'}}
-                />
-                <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: 0, right: 0 }}>
-                    <Button variant="secondary" style={{ position: 'absolute', left: 20 }} onClick={previousImage}>
-                        <FaAngleLeft />
-                    </Button>
-                    <Button variant="secondary" style={{ position: 'absolute', right: 20 }} onClick={nextImage}>
-                        <FaAngleRight />
-                    </Button>
-                </div>
-            </div>
-        </Modal.Body>
-        <Modal.Footer>
-            <Button variant="secondary" onClick={props.onHide}>Close</Button>
-        </Modal.Footer>
+        <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                Product Images
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body style={{ textAlign: 'center' }}>
+                <Carousel activeIndex={index} onSelect={handleSelect} 
+                            style={{ width: "100%", height: "400px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    {props.photoURL.map((imageSrc, i) => (
+                        <Carousel.Item key={i}>
+                            <a href={imageSrc} target='_blank'>
+                                <img src={imageSrc} alt={`Image ${i}`} style={{ border: '10px solid #000', maxWidth: "100%", maxHeight: "400px" }} />
+                            </a>
+                        </Carousel.Item>
+                    ))}
+                </Carousel>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={props.onHide}>Close</Button>
+            </Modal.Footer>
         </Modal>
     );
 }

@@ -3,6 +3,7 @@ import { Container, Button } from 'react-bootstrap';
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
+import Tooltip from '@mui/material/Tooltip';
 import AppNoRecords from './AppNoRecords';
 import FavoriteRenderer from './FavoriteRendererInWishlist';
 import './App.css';
@@ -87,11 +88,13 @@ const AppWishlistTable = ({detail, setDetail, setDetailPage, setNeedCall, result
         if (props.data["#"] === "") {
             return props.value;
         }
-
+ 
         return (
-            <a title={props.value[0]} className='itemTitle' onClick={() => handleDetailSearch(props.value)} >
-                {props.value[0]}
-            </a>
+            <Tooltip title={props.value[0]}>
+                <a className='itemTitle' onClick={() => handleDetailSearch(props.value)} >
+                    {props.value[0]!==null ? props.value[0] : "N/A"}
+                </a>
+            </Tooltip>
         );
     }
 
@@ -142,7 +145,7 @@ const AppWishlistTable = ({detail, setDetail, setDetailPage, setNeedCall, result
         return 200;
     };
 
-    const totalShopping = result.reduce((total, item) => total + parseFloat(item.price.replace('$', '')), 0);
+    const totalShopping = result.reduce((total, item) => total + (item.price !== 'N/A' ? parseFloat(item.price.replace('$', '')) : 0), 0);
 
     const totalRow = {
         "#": "",

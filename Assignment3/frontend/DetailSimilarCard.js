@@ -68,7 +68,7 @@ const DetailSimilarCard = (detailJson3) => {
         <>
             <Container style={{marginTop: "15px", marginBottom: "15px"}}>
                 <Row>
-                    <Col sm="2">
+                    <Col sm="4" lg="2">
                         <Form.Select value={name} onChange={e => setName(e.target.value)}>
                             <option value="0">Default</option>
                             <option value="1">Product Name</option>
@@ -77,7 +77,7 @@ const DetailSimilarCard = (detailJson3) => {
                             <option value="4">Shipping Cost</option>
                         </Form.Select>
                     </Col>
-                    <Col sm = "2">
+                    <Col sm="4" lg="2">
                         <Form.Select value={sort} onChange={e => setSort(e.target.value)} disabled={name === "0"}>
                             <option value="0">Ascending</option>
                             <option value="1">Descending</option>
